@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'planetary_system.dart';
+import 'planet.dart';
 
 class SpaceAdventure {
   final PlanetarySystem planetarySystem;
@@ -11,8 +12,15 @@ class SpaceAdventure {
     printGreeting();
     printIntroduction(responseToPrompt('What is your name?'));
     print('Let\s go on an adventure!');
-    travel(promptForRandomOrSpecificDestination(
-        'Shall I randomly choose a planet for you to visit? (Y or N)'));
+    if (planetarySystem.hasPlanets) {
+     travel(
+       promptForRandomOrSpecificDestination(
+          'Shall I randomly choose a planet for you to visit? (Y or N)'
+          )
+      );
+    } else {
+      print('Aw, there are no planets to explore');
+    }
   }
 
   void printGreeting() {
@@ -26,11 +34,14 @@ class SpaceAdventure {
   }
 
   void travel(bool randomDestination) {
+    Planet planet;
     if (randomDestination) {
-      travelToRandomDestination();
+      planet = planetarySystem.randomPlanet();
     } else {
-      travelTo(responseToPrompt('Name the planet you would like to visit.'));
+      planet = planetarySystem.planetWithName(
+        responseToPrompt('Name the planet you would like to visit.'));
     }
+    travelTo(planet);
   }
 
   bool promptForRandomOrSpecificDestination(String prompt) {
@@ -53,17 +64,8 @@ class SpaceAdventure {
     return stdin.readLineSync();
   }
 
-  void travelToRandomDestination() {
-    final index = Random().nextInt(planetarySystem.numberOfPlanets);
-    travelTo(planetarySystem.planets[index].name);
-  }
-
-  void travelTo(String destination) {
-    print('Traveling to $destination...');
-    planetarySystem.planets.forEach( (planet) {
-      if (planet.name == destination) {
-        print('Arrived at ${planet.name}. ${planet.description}');
-      }
-    });
+  void travelTo(Planet planet) {
+    print('Traveling to ${planet.name}');
+    print('Arrived at ${planet.name}. ${planet.description}');
   }
 }
