@@ -1,17 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:space_adventure/dart_space_adventure.dart';
 
 void main(List<String> arguments) {
-  SpaceAdventure(
-      planetarySystem: PlanetarySystem(
-        name: systemName, 
-        planets: planets()
-        )
-  ).start();
-}
+  File(arguments[0]).readAsString().then((String json) {
+    SpaceAdventure(
+      planetarySystem: PlanetarySystem.fromJson(jsonDecode(json))
+    ).start();
+  });
 
-List<Planet> planets() {
-  return planetData.entries.map(
-     (e) => Planet(name: e.key, description: e.value)
-     ).toList();
 }
-
